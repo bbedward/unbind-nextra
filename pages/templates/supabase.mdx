@@ -1,0 +1,33 @@
+---
+title: "Supabase Post-Install"
+description: "Deploy and configure Supabase with Unbind's pre-configured template"
+---
+
+import { Callout } from 'nextra/components'
+
+# Supabase Template
+
+Supabase is a complex stack that deploys multiple services together.
+
+<Callout>
+"Kong" is deployed as part of the Supabase template, it is a reverse proxy to all supabase services - such as the studio, auth, storage, functions, etc.
+</Callout>
+
+## Notable Variables
+
+| Variable Name | Service Name | Description |
+|---------------|--------------|-------------|
+| `DASHBOARD_USERNAME` | Kong | The username to login to the Supabase Studio |
+| `DASHBOARD_PASSWORD` | Kong | The password to login to the Supabase Studio |
+
+## Accessing your Supabase Admin UI
+
+1. Visit the URL of the `Kong` service
+2. Login with the credentials from the `Variables` section of the `Kong` service
+
+{/* Screenshot of variables for supabase*/}
+
+
+
+
+

@@ -1,0 +1,37 @@
+---
+title: "WireGuard Post-Install"
+description: "Deploy and configure WireGuard with Unbind's pre-configured template"
+---
+
+# WireGuard Access
+
+You can access your WireGuard admin panel by visiting the URL after deployment.
+
+## Admin Credentials
+
+The default username and password will be located in the `Variables` section of the WireGuard service.
+
+{/* Screenshot of variables for pocketbase*/}
+
+## Notable Variables
+
+| Variable Name | Service Name | Description |
+|---------------|--------------|-------------|
+| `INIT_USERNAME` | WireGuard | The username to login to the WireGuard admin panel |
+| `INIT_PASSWORD` | WireGuard | The password to login to the WireGuard admin panel |
+
+## Accessing your WireGuard Admin UI
+
+1. Visit the URL of the `WireGuard` service
+2. Login with the credentials from the `Variables` section of the `WireGuard` service
+
+## Connecting to WireGuard
+
+WireGuard creates a UDP [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) service on a randomly chosen port in the range of 30000-32767.
+
+You can find out what the Port is in the `INIT_PORT` variable of the WireGuard service.
+
+The WireGuard user interface will already be aware of your server's IP and the port so when you export the configurations, it should already be configured correctly.
+
+
+

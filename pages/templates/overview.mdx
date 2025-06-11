@@ -1,0 +1,36 @@
+---
+title: "Templates Overview"
+description: "High-level overview of Unbind's template system and deployment guides"
+---
+
+import { Callout } from 'nextra/components'
+
+# Templates Overview
+
+Unbind has a built-in templating system that can compose multiple multiple services together, for example deploying a stack that requires a database, a web server, and a queue.
+
+<Callout>
+You can think of templates like [docker-compose](https://docs.docker.com/compose/) files or [helm charts](https://helm.sh/) - but they compose services on Unbind.
+</Callout>
+
+## What are Templates?
+
+Templates are a way to compose multiple services together, and deploy them as a single unit.
+- **Databases** - Postgres, MySQL, MongoDB, Redis, etc.
+- **Docker Images** - Any docker image can be part tof a template
+- **Inputs** - Templates can have inputs, which are determined by the user at deploy-time.
+- **Volumes** - Volumes can be attached to services as part of a template.
+- **Variables** - Variables can be configured on template services, and can be auto-generated using a set of generators (such as a password generator).
+- **Variable References** - Template services can reference variables from other services withiin the same template (such as referencing the database credentials)
+
+## How to Deploy a Template
+
+When you create a new service, simply choose the **Template** option and select the template you want to deploy.
+
+{/* template screenshot */}
+
+## Post-install
+
+Many templates are straight forward, and have a guided setup when you visit the URL of the service for the first time.
+
+Some templates do not and store default credentials in the `Variables` section of the service. See the specific post-install pages for instructions regarding certain templates.

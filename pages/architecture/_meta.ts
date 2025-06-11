@@ -4,5 +4,4 @@ export default {
   "build-system": "Build System",
   "metrics-logging": "Metrics & Logging",
   operator: "Operator",
-  "open-source": "Open Source Philosophy",
 } 

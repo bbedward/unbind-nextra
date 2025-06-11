@@ -4,6 +4,8 @@ export default {
   "post-installation": "Post Installation",
   "concepts": "Unbind Concepts",
   "management": "Management",
+  "templates": "Templates",
   "architecture": "Architecture",
+  "open-source": "Open Source Philosophy",
   "support": "Support"
 } 
