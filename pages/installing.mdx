@@ -18,6 +18,9 @@ The installer will verify compatibility with your server and guide you through t
 </Callout>
 
 ### Server Requirements
+<Callout>
+Unbind only supports **x86_64 (Intel/AMD)** and **ARM64/AArch64** architectures.
+</Callout>
 At least one server is required to run Unbind. You can add more after installation at any time.
 
 **System Specifications:**
@@ -27,18 +30,20 @@ At least one server is required to run Unbind. You can add more after installati
 | **CPU** | 2 cores | 4 cores |
 | **Memory** | 4 GB | 8 GB |
 
-**Additional Requirements:**
-- **Architecture**: x86_64 or ARM64
-- **Operating System**: Any of the following:
-  - Ubuntu 22.04 or later
-  - Debian 11 or later  
-  - Fedora 40 or later
-  - OpenSUSE Leap 15 or later
-  - CentOS (stream) 9 or later
-  - AlmaLinux 9 or later
-  - Rocky Linux 9 or later
+**Operating System:**
+| OS | Version Supported | Recommended Version |
+|-----------|---------|-------------|
+| **Ubuntu** | 22.04 or later | 24.04 (LTS) |
+| **Debian** | 11 or later | Latest |
+| **Fedora** | 40 or later | Latest |
+| **OpenSUSE Leap** | 15 or later | Latest |
+| **CentOS Stream** | 9 or later | Latest |
+| **AlmaLinux** | 9 or later | Latest |
+| **Rocky Linux** | 9 or later | Latest |
 
+<Callout>
 Your first server will act as a [control plane](https://kubernetes.io/docs/concepts/overview/components/#control-plane-components). This adds some overhead that reduces the overall capacity of resources available to your workloads. If you add additional worker nodes, they will not have this overhead and will be able to run significantly more workloads than a single server.
+</Callout>
 
 <Callout>
 Unbind's installer will install [k3s](https://k3s.io/) on your server - a certified Kubernetes distribution that is lightweight and easy to manage.
