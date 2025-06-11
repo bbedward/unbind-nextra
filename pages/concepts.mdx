@@ -1,21 +1,15 @@
 ---
-title: "Concept Overview"
+title: "Core Concepts"
 description: "An overview of Unbind terminology and concepts to help you get started."
-category: "getting-started"
-subcategory: "concepts"
+category: "concepts"
 order: 1
 lastUpdated: "2025-06-10"
-tags: ["installation", "kubernetes", "self-hosted"]
+tags: ["concepts", "kubernetes", "teams", "projects", "environments", "services"]
 ---
 
-{/* hero image */}
-
-## Unbind Concepts
 Unbind has a few key concepts that are important to understand in order to fully understand how to use Unbind effectively.
 
-{/* Team->Project->Env->{Group}->Service hierarchy image ? */}
-
-### Team
+## Team
 A **Team** is at the highest level of the Unbind hierarchy. It encompasses *Projects*, *Environments*, and *Services*.
 
 - **Kubernetes namespace**: Each team is associated with a Kubernetes namespace, which is used to isolate resources within the cluster.
@@ -23,7 +17,7 @@ A **Team** is at the highest level of the Unbind hierarchy. It encompasses *Proj
 
 Within one team, you can create multiple **Projects**.
 
-### Project
+## Project
 A **Project** is a collection of **Environments** and therefore **Services**. It is a logical grouping of resources that are related to a specific application or service.
 
 - **Kubernetes label**: Each project is associated with a Kubernetes label, which is used to group resources within the cluster.
@@ -32,7 +26,7 @@ A **Project** is a collection of **Environments** and therefore **Services**. It
 
 Within one project, you can create multiple **Environments**.
 
-### Environment
+## Environment
 An **Environment** is a the last level of the Unbind hierarchy. It is a logical grouping of **Services** that are related to a specific environment, such as development, staging, or production.
 
 - **Kubernetes label**: Each environment is associated with a Kubernetes label, which is used to group resources within the cluster.
@@ -41,14 +35,14 @@ An **Environment** is a the last level of the Unbind hierarchy. It is a logical 
 
 Within one environment, you can create multiple **Services**.
 
-### Service
+## Service
 A **Service** is a single application or service that is deployed within an environment. It can be a web application, database, or any other type of service that you want to deploy.
 
 - **Kubernetes label**: All resources associated with a service are labeled with the service, environment, project, and team IDs.
   - At the low level, this means that we can logically group logs and metrics for a service, environment, project, or team.
 - **Kubernetes resource**: Each service is associated with at least one, but often more Kubernetes resources, such as a Deployment, StatefulSet, Job, Ingress, etc.
 
-### Instance
+## Instance
 An **instance** is a specific running container (pod) of a service.
 
 - **Replicas**: Most of the time, the number of instances will be equal to the number of replicas defined in the service configuration.
@@ -56,7 +50,7 @@ An **instance** is a specific running container (pod) of a service.
   - Some databases will have multiple instances serving different roles, such as a read-replica of a database.
 - **Load balancing**: Your traffic will be automatically load balanced across all instances of a service.
 
-### Variable
+## Variable
 A **Variable** is a synonym for a [Kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret/). They directly correlate to environment variables within each **instance**.
 
 - **Build time**: All variables are also injected at build time, meaning that they are available to the application during the build process.
@@ -68,4 +62,4 @@ A **Variable** is a synonym for a [Kubernetes Secret](https://kubernetes.io/docs
   - **Service**: Variables scoped to a service, are available to be referenced by other services within that environment.
 - **References**: Variables can be references of other variables, or service endpoints. Just use `$` to list all available references when creating a variable.
   - **Auto syncing**: Referenced variables update everywhere. If Service A is referencing `${Service B.DATABASE_PASSWORD}` - and you update the password for Service B, it will automatically trigger a redeployment of Service A with the new password.
-  - **Composition**: You can compose variables with plaintext and as many references as you want. For example, `pg://user:${Service B.DATABASE_PASSWORD}@${Service B.DATABASE_HOST}:${Service B.DATABASE_PORT}/${Service B.DATABASE_NAME}`.
+  - **Composition**: You can compose variables with plaintext and as many references as you want. For example, `pg://user:${Service B.DATABASE_PASSWORD}@${Service B.DATABASE_HOST}:${Service B.DATABASE_PORT}/${Service B.DATABASE_NAME}`. 

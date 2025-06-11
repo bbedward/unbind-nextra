@@ -1,5 +1,7 @@
 export default {
   index: "Welcome",
-  "getting-started": "Getting Started",
+  "prerequisites": "Installing Unbind",
+  "post-installation": "Post Installation",
+  "concepts": "Concepts",
   "support": "Support"
 } 

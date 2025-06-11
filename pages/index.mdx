@@ -6,17 +6,21 @@ lastUpdated: '2025-06-10'
 tags: ['welcome', 'overview', 'getting-started', 'kubernetes', 'self-hosted']
 ---
 
+import { Callout } from 'nextra/components'
+
 {/* hero image */}
 
 ## What is Unbind?
 
-Unbind is an open-source, self-hosted Platform-as-a-Service (PaaS) that gives you the simplicity of [Vercel](https://vercel.com/) or [Railway](https://railway.com/) backed by the power of [Kubernetes](https://kubernetes.io/).
+Unbind is an open-source, self-hosted, comprehensive platform that gives you the simplicity of [Vercel](https://vercel.com/) or [Railway](https://railway.com/) backed by the power of [Kubernetes](https://kubernetes.io/).
 
 ### Simplicity
 
-Just bring a server and a domain name, and in minutes you'll be able to deploy all of your applications, databases, docker images, and many prebuild templates including [n8n](https://n8n.io), [Supabase](https://supabase.com), [Plausible](https://plausible.io), [WordPress](https://wordpress.com), and more.
-
-No need for Dockerfiles, YAML, complex networking configurations, or TLS. It's all taken care of for you seamlessly out of the box.
+Just bring a server and a domain name, and in minutes you'll be able to deploy all of your applications, databases, docker images, and many pre-packaged templates including [n8n](https://n8n.io), [Supabase](https://supabase.com), [Plausible](https://plausible.io), [WordPress](https://wordpress.com), and more.
+- **No Dockerfiles**: Most applications can be deployed with zero configuration.
+- **No YAML**: No need to write complex manifests for your applications and databases.
+- **Automatic TLS**: All applications will automatically issue and renew TLS certificates with [Let's Encrypt](https://letsencrypt.org/).
+- **Automatic Networking**: Unbind will automatically detect your application's ports and configure networking for you.
 
 ### Scalability
 

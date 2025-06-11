@@ -1,0 +1,173 @@
+---
+title: "Installing Unbind"
+description: "Learn about the server requirements, installation process, and DNS configuration for Unbind."
+category: "installation"
+order: 1
+lastUpdated: "2025-06-10"
+tags: ["installation", "prerequisites", "kubernetes", "self-hosted", "domain-name", "dns"]
+---
+
+import { Callout } from 'nextra/components'
+
+<Callout type="default" emoji="🚀">
+**Quick Start**
+```bash copy
+curl -fsSL https://unbind.app | sudo sh
+```
+The installer will verify compatibility with your server and guide you through the process.
+</Callout>
+
+### Server Requirements
+At least one server is required to run Unbind. You can add more after installation at any time.
+
+That server should meet the following minimum requirements:
+- **Architecture**: x86_64 or ARM64
+- **CPU**: 2 cores minimum (4 recommended)
+- **Memory**: 4 GB minimum (8 GB recommended)
+- **Operating System**:
+  - Ubuntu 22.04 or later
+  - Debian 11 or later
+  - Fedora 40 or later
+  - OpenSUSE Leap 15 or later
+  - CentOS (stream) 9 or later
+  - AlmaLinux 9 or later
+  - Rocky Linux 9 or later
+
+Your first server will act as a [control plane](https://kubernetes.io/docs/concepts/overview/components/#control-plane-components). This adds some overhead that reduces the overall capacity of resources available to your workloads. If you add additional worker nodes, they will not have this overhead and will be able to run significantly more workloads than a single server.
+
+<Callout>
+Unbind's installer will install [k3s](https://k3s.io/) on your server - a certified Kubernetes distribution that is lightweight and easy to manage.
+</Callout>
+
+### Domain Name
+Unlike some other platforms, Unbind requires a domain name (or subdomain). The installer will automatically guide you through the configuration, but you will need to have a domain name ready and have access to create DNS records.
+
+The [DNS Section](#dns-configuration) below will guide you through the process of setting up your domain name and wildcard DNS record.
+
+<Callout>
+A **Wildcard DNS** record will allow Unbind to generate domains for all of your applications without any additional DNS configuration.
+</Callout>
+
+## Installation
+
+### Automated Installation
+
+The easiest way to install Unbind is using our installation script:
+
+```bash copy
+curl -fsSL https://unbind.app | sudo sh
+```
+
+### Manual Installation
+
+See the [Bring Your Own Kubernetes](#advanced-bring-your-own-kubernetes) section below for more information.
+
+### Installation Process
+
+The installer will:
+1. **Server validation** - Verify your server meets requirements
+2. **Install system dependencies** - Install required packages
+3. **Domain configuration** - Setup your domain and wildcard DNS
+4. **K3S setup** - Install and configure [k3s](https://k3s.io/) and [Longhorn](https://longhorn.io/)
+5. **Install Unbind** - Install Unbind and all of its dependencies into the new k3s cluster.
+
+<Callout>
+Most steps are fully automated, user input is only required during the domain configuration step.
+</Callout>
+
+## DNS Setup
+Unbind requires a domain name (or subdomain) to be setup before installation.
+
+For this example, we are going to use:
+- `unbind.app` as the domain that we own.
+- `unbind.unbind.app` as the domain that we will use to access our Unbind instance.
+- `unbind-registry.unbind.app` as the domain that we will use for our container registry.
+
+### DNS options
+You have a two options for setting up DNS for Unbind:
+1. **Wildcard DNS**: This is the recommended option for the best experience.
+2. **No Wildcard DNS**: You will only lose the automatic domain generation feature of Unbind, but you can still manually create DNS records for each application you deploy.
+
+### Primary DNS
+For the best experience, it is recommended to configure a wildcard DNS record for Unbind. This will allow Unbind to automatically generate routes for all of your applications without any additional DNS configuration.
+
+
+**Wildcard DNS Example**
+{/* Installer screenshot of choosing option 1 or whatever for wildcard*/}
+
+For our example domain, we are going to create an **A** record for `*.unbind.app` pointing to the public IP address of our Unbind server.
+
+**Cloudflare Example:**
+{/* Screenshot */}
+
+**Porkbun Example:**
+{/* Screenshot */}
+
+**Namecheap Example:**
+{/* Screenshot */}
+
+**GoDaddy Example:**
+{/* Screenshot */}
+
+
+**Other providers:**
+Most DNS providers have a similar interface for creating DNS records - not all support Wildcard DNS, if you need help please join our [Discord community](https://discord.gg/unbind) and ask for assistance!
+
+<Callout type="warning">
+Some providers, such as [Squarespace](https://squarespace.com), do not support wildcard DNS records. You can either forego Wildcard DNS all together, or connect your domain to another provider such as [Cloudflare](https://www.cloudflare.com/) or [Porkbun](https://porkbun.com/).
+</Callout>
+
+**Normal DNS Example**
+{/* Installer screenshot of choosing option 2 or whatever for normal DNS*/}
+For our example domain, we are going to create an **A** record for `unbind.unbind.app` pointing to the public IP address of our Unbind server.
+
+**Cloudflare Example:**
+{/* Screenshot */}
+**Porkbun Example:**
+{/* Screenshot */}
+**Namecheap Example:**
+{/* Screenshot */}
+**GoDaddy Example:**
+{/* Screenshot */}
+**Other providers:**
+The process is the exact same as described above, just create an **A** record for `unbind.unbind.app` pointing to the public IP address of your Unbind server.
+
+
+### Registry DNS
+
+For our example domain, we are going to create an **A** record for `unbind-registry.unbind.app` pointing to the public IP address of our Unbind server.
+
+**Cloudflare Example:**
+{/* Screenshot */}
+{/* Screenshot */}
+
+**Other providers:**
+The process is the exact same as described above, just create an **A** record for `unbind-registry.unbind.app` pointing to the public IP address of your Unbind server.
+
+{/* Installer screenshot of inputting a registry domain*/}
+
+<Callout type="info">
+You can also omit the internal registry and use any public registry such as [Docker Hub](https://hub.docker.com/), [Quay.io](https://quay.io/), or [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) - just choose the option in the installer when prompted.
+{/*Screenshot of registry choice in installer*/}
+</Callout>
+
+### Final Steps
+The installer will validate that your DNS records are set up correctly before proceeding with the installation. If you have any issues, please double-check your DNS records and ensure they are pointing to the correct IP address.
+
+---
+
+## (Advanced) Bring Your Own Kubernetes
+
+<Callout type="warning">
+This is not officially supported yet and is intended for advanced users with deep Kubernetes familiarity.
+</Callout>
+
+You can install Unbind on existing Kubernetes clusters including managed solutions like EKS, GKE, AKS, or DOKS.
+
+**Recommendations:**
+- Use a **new cluster** rather than installing on a pre-existing cluster.
+- Configure a **default storage class** for your cluster, many cloud providers will do this automatically.
+- For K3S: install with `--disable=traefik` flag, as we currently require [ingress-nginx](https://kubernetes.github.io/ingress-nginx/) to be installed.
+
+**Installation:**
+Use [Helmfile](https://helmfile.readthedocs.io) with our configuration from [GitHub](https://github.com/unbindapp/unbind-charts). 

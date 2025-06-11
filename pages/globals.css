@@ -1,0 +1,82 @@
+/* Global styles for Nextra callouts */
+
+/* Target all basic callouts (blockquotes) to be green */
+.nextra-content blockquote {
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  border-left-color: rgb(34, 197, 94) !important;
+  color: rgb(17, 24, 28) !important;
+}
+
+/* Dark mode for blockquotes */
+.dark .nextra-content blockquote {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+  border-left-color: rgba(34, 197, 94, 0.8) !important;
+  color: rgb(243, 244, 246) !important;
+}
+
+/* Target Nextra callout components */
+.nextra-callout {
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  border-color: rgb(34, 197, 94) !important;
+  color: rgb(17, 24, 28) !important;
+}
+
+.nextra-callout .nextra-callout-icon {
+  color: rgb(34, 197, 94) !important;
+}
+
+/* Dark mode for callouts */
+.dark .nextra-callout {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+  border-color: rgba(34, 197, 94, 0.8) !important;
+  color: rgb(243, 244, 246) !important;
+}
+
+.dark .nextra-callout .nextra-callout-icon {
+  color: rgb(34, 197, 94) !important;
+}
+
+/* Override specific callout types to be green (unless they're explicitly info/warning/error) */
+.nextra-callout-default,
+.nextra-callout:not(.nextra-callout-info):not(.nextra-callout-warning):not(.nextra-callout-error) {
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  border-color: rgb(34, 197, 94) !important;
+  color: rgb(17, 24, 28) !important;
+}
+
+.nextra-callout-default .nextra-callout-icon,
+.nextra-callout:not(.nextra-callout-info):not(.nextra-callout-warning):not(.nextra-callout-error) .nextra-callout-icon {
+  color: rgb(34, 197, 94) !important;
+}
+
+/* Dark mode for specific callout types */
+.dark .nextra-callout-default,
+.dark .nextra-callout:not(.nextra-callout-info):not(.nextra-callout-warning):not(.nextra-callout-error) {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+  border-color: rgba(34, 197, 94, 0.8) !important;
+  color: rgb(243, 244, 246) !important;
+}
+
+.dark .nextra-callout-default .nextra-callout-icon,
+.dark .nextra-callout:not(.nextra-callout-info):not(.nextra-callout-warning):not(.nextra-callout-error) .nextra-callout-icon {
+  color: rgb(34, 197, 94) !important;
+}
+
+/* Additional catch-all for any orange/amber callouts */
+.nextra-content [style*="orange"],
+.nextra-content [style*="amber"],
+.nextra-content [class*="orange"],
+.nextra-content [class*="amber"] {
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  border-color: rgb(34, 197, 94) !important;
+  color: rgb(17, 24, 28) !important;
+}
+
+.dark .nextra-content [style*="orange"],
+.dark .nextra-content [style*="amber"],
+.dark .nextra-content [class*="orange"],
+.dark .nextra-content [class*="amber"] {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+  border-color: rgba(34, 197, 94, 0.8) !important;
+  color: rgb(243, 244, 246) !important;
+} 
