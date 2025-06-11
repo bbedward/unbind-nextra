@@ -1,0 +1,46 @@
+---
+title: "Operator"
+description: "Unbind's Kubernetes operator design and functionality"
+---
+
+# Operator
+
+Unbind provides a unified API to deploy every kind of service. That includes databases, docker images, etc.
+
+The primary way we do this is through the [Unbind Operator](https://github.com/unbindapp/unbind-operator), which is an in-house built kubernetes operator that watches for Unbind CRDs and deploys them to the cluster.
+
+## Unbind CRD
+
+The Unbind CRD is a custom resource definition that is used to deploy services to the cluster.
+
+It is a Kubernetes Custom Resource Definition (CRD) that defines a new resource type in the Kubernetes API.
+
+You can see which CRDs are deployed in your cluster by running:
+
+```bash copy
+kubectl get services.unbind.unbind.app -A
+```
+
+## Unbind Operator
+
+The Unbind operator is constantly working to reconcile the state of all Unbind CRDs in the cluster. So when one is edited, the operator will update the service in the cluster to match the desired state. Whether that's adding a domain, changing replicas, or deleting it all together.
+
+## Third Party Operators
+
+Because databases are complex entities and each have their own unique set of rules for managing and scaling them, we use third party operators to manage them.
+
+- The Unbind operator is able to translate Unbind Database CRDs into the Database Operator CRDs.
+- The Unbind operator is capable of installing new operators into the cluster as required (for example, the first time you deploy a MySQL database, moco will be installed)
+
+| Operator | Purpose | Repository | Description |
+|----------|---------|------------|-------------|
+| **Zalando Postgres Operator** | PostgreSQL Management | [postgres-operator](https://github.com/zalando/postgres-operator) | Production-ready PostgreSQL clusters with high availability, backup, and monitoring |
+| **Moco** | MySQL Management | [moco](https://github.com/cybozu-go/moco) | MySQL operator for Kubernetes with automated backup, restore, and clustering |
+| **Flux Helm Operator** | Helm Chart Deployment | [helm-operator](https://github.com/fluxcd/helm-operator) | GitOps operator for managing Helm chart releases and updates |
+| **Altinity ClickHouse Operator** | ClickHouse Management | [clickhouse-operator](https://github.com/Altinity/clickhouse-operator) | Manages ClickHouse clusters for analytics and real-time data processing |
+
+## Database Interface
+
+Unbind provides an internal unified interface for databases, meaning the operator understands a unified format and can render that format for whichever database is requested.
+
+The definitions are located in the [unbind-custom-service-definitions](https://github.com/unbindapp/unbind-custom-service-definitions) repository.

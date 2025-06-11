@@ -1,0 +1,45 @@
+---
+title: "Build System"
+description: "How Unbind's build system is designed and implemented"
+---
+
+import { Callout } from 'nextra/components'
+
+# Build System
+
+## Unbind Builder
+<Callout>
+All "builds" are done with [Buildkit](https://github.com/moby/buildkit) and pushed to the container registry configured during installation.
+</Callout>
+
+The [Unbind builder](https://github.com/unbindapp/unbind-api) is a container that is spawned independently as a [kubernetes job](https://kubernetes.io/docs/concepts/workloads/controllers/job/) when a deployment is needed.
+
+It has several capabilities and responsibilities in the build and deployment process.
+1) It can build your application using [Railpack](https://railpack.com)
+  - Railpack is essentially responsible for generating a "Dockerfile" for your application so you don't have to.
+2) It builds applications using [Buildkit](https://github.com/moby/buildkit)
+3) It translates the build inputs and outputs into an Unbind [CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
+4) It deploys the CRD to the cluster, which is then processed by the [Unbind Operator](/architecture/operator)
+5) For services that do not need build, such as prebuild docker images or databases - the build step is simply bypassed, but the CRD is still created.
+
+## Buildkit
+
+[Buildkit](https://github.com/moby/buildkit) is a container build system that is used to build applications.
+
+It is used to build applications using [Railpack](https://railpack.com) and push the resulting image to the container registry.
+
+We use a rootless buildkit daemon, which is deployed to your cluster after installing Unbind automatically.
+
+<Callout>
+This Documentation is a **work in progress**, but you are able to configure the buildkit daemon to have higher concurrency, scale it up to multiple servers, and even restrict it to only run on specific servers.
+</Callout>
+
+## Build Caching
+
+The builder will automatically create a build cache for your applications, which is stored on your container registry and used to speed up subsequent builds.
+
+## Railpack
+
+[Railpack](https://railpack.com) is a tool created by [Railway](https://railway.app/) that is used to generate a Dockerfile for your application.
+
+It is the default builder when you create a new Service in Unbind.

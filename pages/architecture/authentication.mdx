@@ -1,0 +1,34 @@
+---
+title: "Authentication/OIDC"
+description: "Unbind's authentication system and OIDC integration design"
+---
+
+import { Callout } from 'nextra/components'
+
+# Authentication/OIDC
+<Callout>
+Fine-grained access control is a continuous work in progress.
+</Callout>
+
+{/* Diagram of User <-> Dex <-> Unbind OIDC Server/Other Providers, then they go to unbind API with dex tokens */}
+
+## Unbind OIDC Server
+
+Unbind has an in-house build [OIDC server](https://github.com/unbindapp/unbind-api) that is used to authenticate requests to the Unbind API.
+
+The server is Built using [go-oauth2](https://github.com/golang/oauth2)
+
+## Dex Identity Provider
+
+[Dex](https://dexidp.io/) is an identity service that uses OpenID Connect to authenticate users.
+
+<Callout>
+Unbind's OIDC server is connected to dex as a "provider", the primary place of Dex in Unbind's architecture is to act as a "broker" for other identity providers in the future (such as Google, Github, or any LDAP server).
+</Callout>
+
+## Kubernetes RBAC
+Kubernetes has its own role-based access control system, which is used to control access to the Kubernetes API and resources.
+
+Unbind directly syncs its own user permissions with the Kubernetes API, so that individual users and groups can be assigned specific namespace-scoped roles.
+
+The mechanism this works is through [kube-oidc-proxy](https://github.com/unbindapp/kube-oidc-proxy), which is a reverse proxy that authenticates users using OIDC to the Kubernetes API server.

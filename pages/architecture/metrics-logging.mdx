@@ -1,0 +1,43 @@
+---
+title: "Metrics & Logging"
+description: "Unbind's metrics collection and logging system design"
+---
+
+import { Callout } from 'nextra/components'
+
+# Metrics & Logging
+
+## Labels
+
+We apply kubernetes labels to all services created by Unbind. We then configure [Alloy](https://grafana.com/oss/alloy-opentelemetry-collector/) and the [Victoria Metrics Stack](https://victoriametrics.com/) to scrape metrics from these services specifically.
+
+<Callout>
+Labels alloy us to show you metrics and logs team-wide, project-wide, environment-wide, or at the individual service level.
+</Callout>
+
+## Alloy - Container Logs
+
+[Alloy](https://grafana.com/oss/alloy-opentelemetry-collector/) is used to scrape container logs that contain Unbind labels and push them to [Loki](https://grafana.com/oss/loki/).
+
+<Callout>
+Out of the box, Alloy is only collecting logs from services deployed by Unbind - this means it will scale based on the number of services deployed by Unbind.
+</Callout>
+
+## Loki - Container Logs
+
+[Loki](https://grafana.com/oss/loki/) is a time series database that is used to store container logs.
+
+It allows Unbind to query logs by service, environment, project, or team. As well search for specific keywords, filter by time, and more.
+
+**Why not Kubernetes logs?** 
+Kubernetes has built-in logging for pods, but they are short-lived and do not have any configurable retention, and are pod-specific. By using Loki, we can persist logs for your service across multiple deployments over a larger range of time.
+
+## Victoria Metrics (Stack)
+
+Unbind uses [PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/) to query metrics such as CPU, Ram, Disk Usage, and Network Usage.
+
+In order to do this, we deploy a light version of the [VictoriaMetrics K8s Stack](https://docs.victoriametrics.com/helm/victoriametrics-k8s-stack/) by default during the installation. It scrapes metrics from kubernetes nodes, pods, and other related resources - and exposed them via a [Prometheus](https://prometheus.io/) compatible API.
+
+<Callout>
+Unbind is compatible with other PromQL compatible stacks, such as the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack) - if you opted to bring your own.
+</Callout>

@@ -1,0 +1,63 @@
+---
+title: "Overview"
+description: "High-level overview of Unbind's design philosophy and architecture"
+---
+
+import { Callout } from 'nextra/components'
+
+{/* Design Photo */}
+
+# Architecture Overview
+
+Unbind is built as a collection of services that work together to provide a complete Kubernetes platform. The architecture is designed for scalability, maintainability, and security.
+
+## Core Services
+
+<Callout>
+Unbind is built as an *extension* of **Kubernetes**, therefore kubernetes is foundational to our architecture.
+</Callout>
+
+These are the primary services developed and maintained by the Unbind team:
+
+| Service | Language | Repository | Description |
+|---------|----------|------------|-------------|
+| **Unbind API** | Go | [unbind-api](https://github.com/unbindapp/unbind-api) | Core API server that handles all business logic, user management, and orchestrates deployments |
+| **Unbind UI** | Next.js | [unbind-ui](https://github.com/unbindapp/unbind-ui) | Modern web interface providing the complete user experience for managing applications |
+| **Unbind Builder** | Go | [unbind-api](https://github.com/unbindapp/unbind-api) | Build service responsible for creating container images from source code |
+| **Unbind Operator** | Go | [unbind-operator](https://github.com/unbindapp/unbind-operator) | Kubernetes operator that manages application deployments and lifecycle |
+| **Unbind OIDC Server** | Go | [unbind-api](https://github.com/unbindapp/unbind-api) | OpenID Connect server for secure authentication and authorization |
+
+## Third-Party Dependencies
+
+Unbind leverages several best-in-class open source projects to provide robust functionality:
+
+### Authentication & Security
+| Component | Purpose | Details |
+|-----------|---------|---------|
+| **[Dex](https://github.com/dexidp/dex)** | OIDC Identity Provider | Handles user authentication and integrates with external identity providers |
+| **[kube-oidc-proxy](https://github.com/unbindapp/kube-oidc-proxy)** | Kubernetes Auth Proxy | Securely authenticates users to the Kubernetes API server using OIDC tokens |
+
+### Build System
+| Component | Purpose | Details |
+|-----------|---------|---------|
+| **[Buildkit](https://github.com/moby/buildkit)** | Container Build Engine | High-performance, cache-efficient container image builder |
+| **[Railpack](https://railpack.com)** | Build Plan Generator | Automatically analyzes source code and generates optimized build configurations |
+
+### Observability & Logging
+| Component | Purpose | Details |
+|-----------|---------|---------|
+| **[Alloy](https://grafana.com/oss/alloy-opentelemetry-collector/)** | Log Collection | Collects and aggregates container logs from across the platform |
+| **[Loki](https://grafana.com/oss/loki/)** | Log Storage | Horizontally scalable log storage with powerful query capabilities |
+
+### Data Storage
+| Component | Purpose | Details |
+|-----------|---------|---------|
+| **[PostgreSQL](https://www.postgresql.org/)** | Primary Database | Stores all application metadata, user data, and deployment configurations |
+| **[Redis](https://redis.io/)** | Cache & Queue | Handles build queues, session storage, and general purpose caching |
+
+## Architecture Principles
+
+- **Microservices**: Each component has limited responsibilities and can be scaled independently
+- **Cloud Native**: Built for Kubernetes with cloud-native patterns and practices
+- **Observability**: Comprehensive logging and metrics collection across all services
+- **Extensibility**: Modular design allows for easily adding new integrations and customizing the platform to your needs.
