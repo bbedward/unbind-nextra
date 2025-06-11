@@ -1,0 +1,50 @@
+---
+title: "Pre-requisites"
+description: "Learn about the server requirements, domain name setup, and advanced installation options for Unbind."
+category: "getting-started"
+subcategory: "installation"
+order: 1
+lastUpdated: "2025-06-10"
+tags: ["installation", "prerequisites", "kubernetes", "self-hosted", "domain-name"]
+---
+
+{/* hero image */}
+
+## Pre-requisites
+
+### Server Requirements
+At least one server is required to run Unbind. You can add more after installation at any time. {/* See the adding node section*/}
+
+That server should meet the following minimum requirements:
+- **Architecture**: x86_64 or ARM64
+- **CPU**: 2 cores minimum (4 recommended)
+- **Memory**: 4 GB minimum (8 GB recommended)
+- **Disk**: 20 GB minimum (SSD recommended)
+- **Operating System**: A variety of operating systems are supported, including:
+  - Ubuntu 22.04 or later
+  - Debian 11 or later
+  - Fedora 40 or later
+  - OpenSUSE Leap 15 or later
+  - CentOS stream 9 or later
+  - AlmaLinux 9 or later
+  - Rocky Linux 9 or later
+
+Your first server will act as a [control plane](https://kubernetes.io/docs/concepts/overview/components/#control-plane-components). This adds some overhead that reduces the overall capacity of resources available to your workloads. If you add additional worker nodes, they will not have this overhead and will be able to run significantly more workloads than a single server.
+
+### Domain Name
+Unlike some other PaaS solutions, Unbind requires a domain name (or sub domain). The installer will automatically guide you through the configuration, but you will need to have a domain name ready and have access to create DNS records.
+
+For the best experience, it is recommended to configure a wildcard DNS record for unbind. This will allow Unbind to automatically generate routes for all of your applications without any additional DNS configuration.
+
+### (Advanced) Bring your own kubernetes
+**Note**: This is not an officially supported installation method yet and is intended for advanced users who have a deep familiarity with Kubernetes. Documentation is limited for now, but will be extended in the future.
+**Coming soon**: Instructions for specific cloud providers.
+
+It is possible to install Unbind on any kubernetes cluster including fully managed cloud solutions such as [EKS](https://aws.amazon.com/eks/), [GKE](https://cloud.google.com/kubernetes-engine), [AKS](https://azure.microsoft.com/en-us/services/kubernetes-service/), [DOKS](https://www.digitalocean.com/products/kubernetes), or any other kubernetes cluster that you manage yourself.
+
+- **Recommended**: Use a new cluster, not an existing one
+- **K3S**: If installing on a K3S cluster, it is preferable if K3S is installed with the `--disable=traefik` option as Unbind requires [ingress-nginx](https://kubernetes.github.io/ingress-nginx/) to be installed.
+- **Default Storage Class**: Unbind requires a default storage class to be set up in your cluster. If you are using a cloud provider, this is usually set up automatically. If you are using a self-hosted cluster, you will need to set up a default storage class manually with something such as [Longhorn](https://longhorn.io/) or [OpenEBS](https://openebs.io/).
+
+You can use [Helmfile](https://helmfile.readthedocs.io) to install Unbind on your cluster. The Helmfile configuration is on [GitHub](https://github.com/unbindapp/unbind-charts)
+

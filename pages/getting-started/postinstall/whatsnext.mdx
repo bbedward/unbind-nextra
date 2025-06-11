@@ -1,0 +1,76 @@
+---
+title: 'What Next?'
+description: 'An overview of the things you can do with your new Unbind installation.'
+category: 'getting-started'
+subcategory: 'postinstall'
+order: 2
+lastUpdated: '2025-06-10'
+tags: ['installation', 'kubernetes', 'self-hosted']
+---
+
+import { Callout } from 'nextra/components'
+
+{/* hero image */}
+
+## Deploy an Application
+
+Unbind supports any containerized application, and there are multiple ways you can get things up and running:
+
+- **Deploy from GitHub**: Connect your GitHub account and deploy applications directly from your repositories.
+  - **No code needed**: Unbind has its own build system that leverages [Railpack](https://railpack.com/) and [BuildKit](https://docs.docker.com/build/buildkit/) - most of your applications can be deployed with zero configuration.
+  - **Already have a Dockerfile?** Just choose the **Docker** builder and Unbind will build from your Dockerfile.
+  - **Automatic builds**: Unbind will automatically build and deploy updated to your application when you push to your repository.
+- **Deploy any Docker image**: Deploy any Docker image from a public or private registry.
+
+### Databases
+
+Databases are a first-class citizens on Unbind. We use what are known as [Operators](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) to manage databases. Most of these support seamless backups, replication, and high availability configurations.
+
+Some of the databases we support out of the box include:
+
+- **PostgreSQL**: We use [Zalando's Postgres Operator](https://github.com/zalando/postgres-operator) to manage PostgreSQL databases.
+  - Supports continuous backups and point-in-time recovery - you can restore your database to any point in time, even 5 minutes ago.
+  - We use a custom [Spilo](https://github.com/unbindapp/spilo) image that includes many popular extensions such as [PostGIS](https://postgis.net/), [pgvector](https://github.com/pgvector/pgvector), [TimescaleDB](https://www.timescale.com/), and all of the extensions required to fully self-host [Supabase](https://supabase.com).
+- **MySQL**: We use the [MOCO](https://cybozu-go.github.io/moco/) operator to provision InnoDB MySQL clusters.
+- **Clickhouse**: We use the [Altinity Clickhouse Operator](https://github.com/Altinity/clickhouse-operator) to manage Clickhouse databases.
+- **Redis**: We use the [bitnami helm chart](https://artifacthub.io/packages/helm/bitnami/redis) to deploy redis databases
+- **MongoDB**: We use the [bitnami helm chart](https://artifacthub.io/packages/helm/bitnami/mongodb) to deploy MongoDB databases.
+
+<Callout type="info">
+1. We don't install all of the operators by default, but they are automatically installed when you deploy a new type of database for the first time.
+2. Not only can you deploy multiple types of databases, but you can also deploy multiple versions of the same database type. For example, you can spin up PostgreSQL 14 or PostgreSQL 17 - MongoDB 7 or MongoDB 8, etc.
+</Callout>
+
+### Templates
+
+Unbind has a powerful templating system and we include many popular applications out of the box.
+
+- **Zero required inputs**: All templates require zero inputs\* to deploy. Unbind will generate necessary encryption keys, passwords, and any other configuration automatically and inject them into the service variables.
+- **Production configurations**: All templates are designed to be production-ready out of the box, with sensible defaults for security, performance, and reliability.
+- **Databases**: All templates integrate with Unbind's database system, meaning you get all of the benefits of managed databases, including backups, scaling, and high availability.
+- **Popular applications**: Some of the templates we include out of the box are:
+  - [Plausible](https://plausible.io)
+  - [PocketBase](https://pocketbase.io)
+  - [Ghost](https://ghost.org)
+  - [n8n](https://n8n.io)
+    - Deployed with the [worker](https://chakray.com/empowering-task-automation-configuring-and-using-workers-in-n8n/) configuration for better performance and scalability.
+  - [Supabase](https://supabase.com)
+    - All features including authentication, storage, real-time, edge functions, and more.
+  - [MinIO](https://min.io)
+  - [NocoDB](https://nocodb.com)
+  - [Appsmith](https://www.appsmith.com)
+  - [WordPress](https://wordpress.com)
+  - [Meilisearch](https://www.meilisearch.com)
+  - [Flowise](https://flowiseai.com)
+  - [Teable](https://teable.io)
+  - [Umami](https://umami.is)
+  - [Listmonk](https://listmonk.app)
+  - [Formbricks](https://formbricks.com)
+  - [WireGuard](https://www.wireguard.com)
+    - With [wg-easy](https://wg-easy.github.io/wg-easy/latest/)
+
+_Coming soon_ we will integrate a template builder, so you can create your own templates and share them with the community or submit them to the Unbind team for inclusion in the official Unbind distribution.
+
+<Callout type="warning">
+Templates are designed to not require any inputs, with the exception of a domain name if you have not configured Wildcard DNS
+</Callout>
