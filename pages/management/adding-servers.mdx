@@ -1,0 +1,69 @@
+---
+title: "Add/Remove Servers"
+description: "Learn how to scale your Unbind deployment by adding additional server nodes to your cluster."
+category: "management"
+order: 2
+lastUpdated: "2025-06-10"
+tags: ["scaling", "servers", "nodes", "cluster", "kubernetes"]
+---
+
+import { Callout } from 'nextra/components'
+
+# Adding Servers
+
+1. Create a new server that meets the [system requirements](/installing#server-requirements)
+2. On your existing server run the following command:
+```bash copy
+unbind add-node
+```
+This will out a command that looks like:
+```bash
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.33.1+k3s1 K3S_URL=https://<YOUR_SERVER_IP>:6443 K3S_TOKEN=<SECRET_JOIN_TOKEN> sh -
+```
+3. Copy the command and run it on the new server.
+
+## Verifying the Node joined.
+
+Run the following command on your primary server to check if the node joined successfully:
+```bash copy
+kubectl get nodes
+```
+
+## Removing a node
+
+<Callout type="warning">
+If you are using longhorn, removing a node will delete all data from the node, including any persistent volumes. To avoid data loss, longhorn *must* be configured with at least 3 replicas - or you must migrate all data to another node before removing the node.
+</Callout>
+
+1. Cordon the node you intend to remove, this will prevent new workloads from being scheduled to it.
+```bash copy
+kubectl cordon <node-name>
+```
+2. Drain the node, this will gracefully move all workloads to other nodes.
+```bash copy
+kubectl drain <node-name> --ignore-daemonsets --delete-local-data
+```
+3. Delete the node.
+```bash copy
+kubectl delete node <node-name>
+```
+4. Verify the node is removed.
+```bash copy
+kubectl get nodes
+```
+
+You are free to repurpose or delete the server as you see fit.
+
+## High Availability
+
+<Callout type="warning">
+This section is a **work in progress** and just gives a general overview of how to achieve high availability.
+</Callout>
+
+For a high availability k3s cluster, generally you will need to configure the following:
+- An **odd** number of *control plane* servers.
+- Control planes need to use `etcd`, for k3s this is a matter of adding `--cluster-init` to `/etc/systemd/system/k3s.service` and restarting the service with `sudo systemctl daemon-reload && sudo systemctl restart k3s`
+- It's ideal to configure an external load balancer, many cloud providers offer load balancers as a service.
+- It's ideal to **not** schedule normal workloads on the control plane servers, and instead use a separate set of servers for that.
+  - You can use [taints](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) to prevent workloads from being scheduled to the control plane servers.
+- If using [longhorn](https://longhorn.io/) (Unbind's default storage class) - it's ideal to increase the number of replicas to 3 or more to prevent data loss in the event of a total system failure.

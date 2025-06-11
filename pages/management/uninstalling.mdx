@@ -1,0 +1,121 @@
+---
+title: "Uninstalling Unbind"
+description: "Learn how to properly uninstall Unbind and clean up all components from your server."
+category: "management"
+order: 5
+lastUpdated: "2025-06-10"
+tags: ["uninstall", "removal", "cleanup", "maintenance"]
+---
+
+import { Callout } from 'nextra/components'
+
+# Uninstalling Unbind
+
+If you need to completely remove Unbind from your server, this guide will walk you through the proper uninstallation process.
+
+<Callout type="warning">
+**Data Loss Warning**: Uninstalling Unbind will permanently delete all applications, data, and configurations. Make sure to backup any important data before proceeding.
+</Callout>
+
+## Uninstallation Methods
+
+### Method 1: Unbind Script (Recommended)
+
+This method removes Unbind, K3S, and all associated data:
+
+```bash copy
+unbind uninstall
+```
+
+<Callout type="info">
+This is the recommended method as it ensures complete cleanup of all Kubernetes components, such as Longhorn.
+</Callout>
+
+### Method 2: Uninstall k3s directly
+
+This is not recommended as it may leave some data behind.
+
+```bash copy
+# Run k3s uninstaller
+sudo /usr/local/bin/k3s-uninstall.sh
+```
+
+### (Advanced) Selectively remove components from k3s
+
+<Callout type="warning">
+This will likely break your Unbind installation, proceed at your own risk.
+</Callout>
+
+You can use [Helm](https://helm.sh/) to remove specific components while keeping others.
+
+To list all components installed by Unbind
+```bash copy
+helm list -n unbind-system
+```
+
+To remove a specific component
+```bash copy
+helm uninstall <component-name> -n unbind-system
+```
+
+## DNS and SSL Cleanup
+
+### Remove DNS Records
+
+<Callout type="warning">
+When you tear down a server, cloud providers will re-use your IP address. It is important to remove your DNS records so they don't unintentionally resolve to someone else's server.
+</Callout>
+
+1. **Remove A records** for your Unbind domain
+2. **Remove wildcard DNS** records if configured
+3. **Remove registry DNS** records
+
+## Verification
+
+After uninstallation, verify everything is removed:
+
+### Check Running Processes
+
+```bash copy
+# Check for any remaining K3S processes
+ps aux | grep k3s
+
+# Check for container runtime processes
+ps aux | grep containerd
+```
+
+### Check Network Interfaces
+
+```bash copy
+# List network interfaces
+ip link show
+
+# Should not see flannel.1, cni0, or other K3S interfaces
+```
+
+### Check Mounted Filesystems
+
+```bash copy
+# Check for any remaining K3S mounts
+mount | grep k3s
+mount | grep longhorn
+```
+
+### Check System Services
+
+```bash copy
+# Verify K3S services are removed
+sudo systemctl list-units | grep k3s
+```
+
+### Reboot the Server
+It's a good idea to reboot the server after uninstalling to ensure all services are stopped and resources are freed up.
+
+```bash copy
+sudo reboot
+```
+
+## Anything we can do?
+We'd love to know why Unbind didn't work for you, and how we can adapt to fit your needs.
+
+Feel free to [contact us](https://unbind.app/contact) if you have any feedback or suggestions.

@@ -1,0 +1,138 @@
+---
+title: "Cluster Access"
+description: "Learn how to configure and access your Unbind Kubernetes cluster using kubectl and other tools."
+category: "management"
+order: 1
+lastUpdated: "2025-06-10"
+tags: ["kubectl", "kubeconfig", "cluster", "access", "authentication"]
+---
+
+import { Callout } from 'nextra/components'
+
+# Cluster Access
+
+Unbind runs on Kubernetes (K3S), and you can access your cluster using standard Kubernetes tools like `kubectl` and `helm`. This guide covers different ways to configure and access your cluster.
+
+## Local Access (On the Server)
+
+### Default Configuration
+
+When Unbind is installed, the kubeconfig file is automatically created at `/etc/rancher/k3s/k3s.yaml`. This file contains the credentials and configuration needed to access your cluster.
+
+### Using kubectl Locally
+
+On your ***control plane*** servers you can simply use the `kubectl` command without any extra configuration.
+
+#### Example
+
+```bash copy
+kubectl get nodes # List nodes (servers)
+kubectl get pods --all-namespaces # List all pods (applications)
+kubectl get services --all-namespaces # List all services (used to access applications)
+```
+
+## Remote Access
+
+To access your Unbind cluster from your local machine or other computers, you need to copy and modify the kubeconfig file.
+
+### Setting Up Remote Access
+
+1. **Copy the kubeconfig file** from your Unbind server to your local machine:
+
+   ```bash copy
+   # On your local machine
+   scp user@your-unbind-server:/etc/rancher/k3s/k3s.yaml ~/.kube/config
+   ```
+
+   Or manually copy the contents:
+
+   ```bash copy
+   # On the server
+   sudo cat /etc/rancher/k3s/k3s.yaml
+   ```
+
+2. **Edit the server address** in the kubeconfig file:
+
+   Open `~/.kube/config` and replace the server address:
+
+   ```yaml
+   apiVersion: v1
+   clusters:
+   - cluster:
+       certificate-authority-data: LS0tLS1CRUdJTi...
+       server: https://YOUR_SERVER_IP:6443  # Change this line
+     name: default
+   ```
+
+   Replace `https://127.0.0.1:6443` with `https://YOUR_SERVER_IP:6443`
+
+3. **Test the connection**:
+
+   ```bash copy
+   kubectl get nodes
+   kubectl get pods --all-namespaces
+   ```
+## Security Considerations
+
+### File Permissions
+
+Ensure your kubeconfig file has proper permissions:
+
+```bash copy
+# On the server
+sudo chmod 600 /etc/rancher/k3s/k3s.yaml
+
+# On your local machine
+chmod 600 ~/.kube/config
+```
+
+### Network Security
+
+- **Firewall**: Ensure port 6443 is accessible from your client machines
+- **TLS**: The connection is encrypted by default using TLS
+
+### Access Control
+
+<Callout type="warning">
+The default kubeconfig provides cluster-admin access. For production environments, consider creating limited-access service accounts.
+</Callout>
+
+Create a limited service account for specific users:
+
+```bash copy
+# Create a service account
+kubectl create serviceaccount limited-user
+
+# Create a role with limited permissions
+kubectl create role pod-reader --verb=get,list --resource=pods
+
+# Bind the role to the service account
+kubectl create rolebinding pod-reader-binding --role=pod-reader --serviceaccount=default:limited-user
+
+# Get the service account token
+kubectl get secret $(kubectl get serviceaccount limited-user -o jsonpath='{.secrets[0].name}') -o jsonpath='{.data.token}' | base64 --decode
+```
+
+## Troubleshooting
+
+If you're having issues accessing your cluster, see the [Troubleshooting](/management/troubleshooting) page for detailed solutions to common cluster access problems.
+
+## Quick Reference
+
+### Common Commands
+
+```bash copy
+# Check cluster status
+kubectl cluster-info
+kubectl get nodes
+kubectl get pods --all-namespaces
+
+# Check current configuration
+kubectl config view
+kubectl config current-context
+```
+
+### File Locations
+
+- **Server kubeconfig**: `/etc/rancher/k3s/k3s.yaml`
+- **Local kubeconfig**: `~/.kube/config`

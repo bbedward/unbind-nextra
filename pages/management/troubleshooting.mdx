@@ -1,0 +1,328 @@
+---
+title: "Troubleshooting"
+description: "Common issues and solutions for troubleshooting your Unbind installation and deployment problems."
+category: "management"
+order: 4
+lastUpdated: "2025-06-10"
+tags: ["troubleshooting", "debugging", "issues", "problems", "solutions"]
+---
+
+import { Callout } from 'nextra/components'
+
+<Callout>
+Quick health check command
+```bash copy
+echo "=== UNBIND SYSTEM HEALTH CHECK ===" && \
+echo "Pod Status:" && kubectl get pods -n unbind-system -l 'app in (unbind-ui,unbind-api,unbind-auth)' && \
+echo -e "\nNode Status:" && kubectl get nodes && \
+echo -e "\nRecent Events:" && kubectl get events -n unbind-system --sort-by='.lastTimestamp' | tail -10
+3) Unbind application logs
+kubectl logs -n unbind-system --tail 100 -l 'app in (unbind-ui,unbind-api,unbind-auth,unbind-operator,dex)'
+```
+Copy and paste this into your terminal to check the health of your servers and unbind related workloads.
+</Callout>
+
+# Troubleshooting
+
+This guide covers common issues you might encounter with Unbind/Kubernetes and how to resolve them.
+
+## General Diagnostic Commands
+
+Before diving into specific issues, these commands help gather information about your system:
+
+### System Status
+```bash copy
+# Check overall cluster health
+sudo kubectl get nodes
+sudo kubectl get pods --all-namespaces
+# Get logs from a pod
+sudo kubectl logs <pod-name> -n <namespace>
+
+# Check Unbind specific services
+sudo kubectl get pods -n unbind-system
+sudo kubectl get services -n unbind-system
+```
+
+### Resource Usage
+```bash copy
+# Check resource consumption
+sudo kubectl top nodes # By server
+sudo kubectl top pods --all-namespaces # By workload
+
+# Check storage usage
+df -h
+```
+
+### Logs
+```bash copy
+# Unbind application logs
+sudo kubectl logs deployment/unbind-api-deployment -n unbind-system --follow
+sudo kubectl logs deployment/unbind-ui-deployment -n unbind-system --follow
+
+# K3S system logs
+sudo journalctl -u k3s -f
+
+# System logs
+sudo dmesg | tail -20
+```
+
+## Common Issues
+
+### 1. Cluster Access Issues
+
+**Symptoms:**
+- Can't connect to the cluster with kubectl
+- "connection refused" errors
+- Certificate or authentication errors
+
+#### Connection Refused
+
+If you get "connection refused" errors:
+
+```bash copy
+# Check if K3S is running
+sudo systemctl status k3s
+
+# Check if the API server is listening
+sudo netstat -tlnp | grep 6443
+
+# Check firewall rules
+sudo ufw status
+sudo iptables -L | grep 6443
+```
+
+#### Certificate Issues
+
+If you encounter certificate errors:
+
+```bash copy
+# Check certificate validity
+openssl s_client -connect YOUR_SERVER_IP:6443
+
+# Skip certificate verification (testing only)
+kubectl --insecure-skip-tls-verify get nodes
+```
+
+#### Permission Denied
+
+<Callout>
+If you are having issues accessing the cluster *remotely*, the credentials may have been rotated. You can refresh the kubeconfig by following the [cluster access](/management/cluster-access) guide.
+</Callout>
+
+If you get permission errors:
+
+```bash copy
+# Check kubeconfig file permissions
+ls -la ~/.kube/config
+
+# Check if you're using the right kubeconfig
+kubectl config view
+
+# Check server connectivity
+kubectl cluster-info
+```
+
+#### Authentication Issues
+
+```bash copy
+# Check if credentials are valid
+kubectl auth can-i get pods
+
+# View current user info
+kubectl config view --minify
+
+# Check for expired certificates
+kubectl get csr
+```
+
+### 2. Installation Failed
+
+<Callout>
+If the installation fails for any reason, you can attempt to run the installer again.
+</Callout>
+
+**Diagnostic Steps:**
+```bash copy
+# Check system requirements
+cat /proc/cpuinfo | grep processor | wc -l  # CPU count
+free -h  # Memory
+df -h   # Disk space
+
+# Check network connectivity
+curl -I https://unbind.app
+ping 8.8.8.8
+```
+
+**Solutions:**
+- Verify [system requirements](/installing#server-requirements) are met
+- Check internet connectivity
+- Ensure ports 80, 443, 6443 are available
+
+### 3. Can't Access Unbind UI
+
+**Symptoms:**
+- Browser shows connection refused or timeout
+- DNS resolution issues
+
+**Diagnostic Steps:**
+```bash copy
+# Check if services are running
+sudo kubectl get pods -l app=unbind-ui -n unbind-system
+sudo kubectl get services -l app=unbind-ui -n unbind-system
+```
+
+**Solutions:**
+- Verify DNS records point to your server
+- Check firewall settings (allow ports 80, 443)
+- Check SSL certificate status: `sudo kubectl get certificaterequest --all-namespaces`
+
+### 4. Applications Won't Start
+
+**Symptoms:**
+- Pods stuck in Pending, CrashLoopBackOff, or Error states
+- Applications show as unhealthy
+
+**Diagnostic Steps:**
+```bash copy
+# Check pod status and events
+sudo kubectl get pods --all-namespaces
+sudo kubectl describe pod POD_NAME -n <namespace>
+
+# Check resource constraints
+sudo kubectl describe nodes
+sudo kubectl get events --sort-by=.metadata.creationTimestamp
+```
+
+**Solutions:**
+- **Insufficient Resources**: Add more nodes, rescale server, or set tighter resource limits for specific workloads.
+- **Image Pull Issues**: Check internet connectivity and registry credentials
+- **Storage Issues**: Verify persistent volume claims: `kubectl get pvc` and longhorn pod status `kubectl get pods -n longhorn-system`
+- **Configuration Errors**: Check application logs for errors.
+
+### 5. Storage Issues
+
+**Symptoms:**
+- Pods can't mount volumes
+- "No space left on device" errors
+- Longhorn volumes in degraded state
+
+**Diagnostic Steps:**
+```bash copy
+# Check disk space
+df -h
+sudo kubectl get pv,pvc --all-namespaces
+
+# Check Longhorn status
+sudo kubectl get pods -n longhorn-system
+```
+
+**Solutions:**
+- **Disk Full**: Clean up unused containers and volumes, you can do `sudo kubectl delete pvc <PVC_NAME> -n <namespace>`
+- **Longhorn Issues**: Restart Longhorn: `sudo kubectl rollout restart daemonset/longhorn-manager -n longhorn-system`
+- **Permission Issues**: Check node storage permissions
+
+### 6. Networking Problems
+
+**Symptoms:**
+- Services can't communicate
+- External traffic not reaching applications
+- DNS resolution failures
+
+**Diagnostic Steps:**
+```bash copy
+# Check network connectivity between pods
+sudo kubectl exec -it POD_NAME -n <namespace> -- ping SERVICE_NAME
+
+# Check DNS resolution
+sudo kubectl exec -it POD_NAME -n <namespace> -- nslookup kubernetes.default
+
+# Check service endpoints
+sudo kubectl get endpoints --all-namespaces
+```
+
+**Solutions:**
+- **CNI Issues**: Restart flannel: `sudo kubectl rollout restart daemonset/flannel -n kube-system`
+- **DNS Issues**: Restart CoreDNS: `sudo kubectl rollout restart deployment/coredns -n kube-system`
+- **Firewall**: Check iptables rules and security groups
+- **Reboot the server**: If you're having issues with networking, it's often a good idea to reboot the server - this will flush iptables rules and reset the network stack.
+
+### 7. Performance Issues
+
+**Symptoms:**
+- Slow application response times
+- High resource usage
+- Frequent pod restarts
+
+**Diagnostic Steps:**
+```bash copy
+# Monitor resource usage
+sudo kubectl top nodes
+sudo kubectl top pods --all-namespaces
+
+# Check for resource limits
+sudo kubectl describe pods --all-namespaces | grep -A 5 -B 5 "Limits\|Requests"
+
+# Monitor system load
+htop
+iostat 1 5
+```
+
+**Solutions:**
+- **CPU/Memory**: Increase resource limits or add nodes
+- **I/O Bottleneck**: Use faster storage or optimize applications
+- **Network**: Check for high network utilization
+
+## Advanced Troubleshooting
+
+### Cluster Recovery
+
+If your cluster is in a bad state or a node is not responding:
+
+```bash copy
+# Restart K3S service
+sudo systemctl restart k3s
+```
+
+## Getting Help
+
+### Collecting Debug Information
+
+When seeking help, collect this information:
+
+```bash copy
+# System information
+uname -a
+sudo k3s --version
+
+# Cluster state
+sudo kubectl cluster-info dump > cluster-dump.yaml
+
+# Application logs
+sudo kubectl logs deployment/unbind-api-deployment -n unbind-system > unbind-api.log
+sudo kubectl logs deployment/unbind-ui-deployment -n unbind-system > unbind-ui.log
+```
+
+### Support Channels
+
+- **Discord Community**: [Join our Discord](https://discord.gg/unbind) for real-time help
+- **GitHub Issues**: Report bugs at [GitHub](https://github.com/unbindapp/unbind)
+- **Documentation**: Check the [Support](/support) page for more resources
+
+<Callout type="info">
+When reporting issues, always include your system information, error messages, and relevant logs.
+</Callout>
+
+## Prevention
+
+### Regular Maintenance
+
+```bash copy
+# Update system packages
+sudo apt update && sudo apt upgrade  # Ubuntu/Debian
+sudo dnf update                      # Fedora/RHEL
+sudo zypper update                   # OpenSUSE
+
+# Clean up unused resources
+sudo kubectl delete pods --field-selector=status.phase=Failed
+sudo crictl rmi $(sudo crictl images -q) # Equivalent to docker system prune -a
+```
