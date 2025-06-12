@@ -14,7 +14,7 @@ import { Callout } from 'nextra/components'
 ```bash copy
 curl -fsSL https://unbind.app | sudo sh
 ```
-The installer will verify compatibility with your server and guide you through the process.
+The installer is self-guided and will walk you through the process.
 </Callout>
 
 ### Server Requirements
@@ -75,7 +75,7 @@ See the [Bring Your Own Kubernetes](#advanced-bring-your-own-kubernetes) section
 ### Installation Process
 
 The installer will:
-1. **Server validation** - Verify your server meets requirements
+1. **System Check** - Ensure your system is compatible with Unbind 
 2. **Install system dependencies** - Install required packages
 3. **Domain configuration** - Setup your domain and wildcard DNS
 4. **K3S setup** - Install and configure [k3s](https://k3s.io/) and [Longhorn](https://longhorn.io/)
