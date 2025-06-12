@@ -11,11 +11,17 @@ The primary way we do this is through the [Unbind Operator](https://github.com/u
 
 ## Unbind CRD
 
-The Unbind CRD is a custom resource definition that is used to deploy services to the cluster.
+A [custom resource definition (CRD)](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) is a way to extend the Kubernetes API with custom resources, kind of like adding a plugin.
 
-It is a Kubernetes Custom Resource Definition (CRD) that defines a new resource type in the Kubernetes API.
+Unbind defines its own resource specification for [Services](/concepts#service), at the low level it allows a single object to represent a combination of native kubernetes API resources - including:
+- [Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
+- [Ingresses](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+- [Services](https://kubernetes.io/docs/concepts/services-networking/service/)
+- [Other CRDs](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) - for the other operators that Unbind integrates with.
 
-You can see which CRDs are deployed in your cluster by running:
+It intelligently creates the resources that are required based on the specification provided.
+
+You can see which Unbind services (CRDs) are deployed in your cluster by running:
 
 ```bash copy
 kubectl get services.unbind.unbind.app -A

@@ -3,14 +3,6 @@ title: "PocketBase Post-Install"
 description: "Deploy and configure PocketBase with Unbind's pre-configured template"
 ---
 
-# PocketBase Access
-
-You can access your PocketBase admin panel by visiting the page after deployment.
-
-```
-https://yourpocketbasedomain.com/_/
-```
-
 ## Notable Variables
 
 | Variable Name | Service Name | Description |
@@ -18,9 +10,10 @@ https://yourpocketbasedomain.com/_/
 | `PB_ADMIN_EMAIL` | PocketBase | The email to login to the PocketBase admin panel |
 | `PB_ADMIN_PASSWORD` | PocketBase | The password to login to the PocketBase admin panel |
 
-## Accessing your Supabase Admin UI
+## Accessing your PocketBase Admin UI
 
-1. Visit the URL of the `PocketBase` service - be sure to add `/_/` to the end of the URL
+1. Visit the URL of the `PocketBase` service
+  - PocketBase has the web console accessible at `/_/` - so be sure to add `/_/` to the end of the URL for the web console.
 2. Login with the credentials from the `Variables` section of the `PocketBase` service
 
 {/* Screenshot of variables for pocketbase*/}

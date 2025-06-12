@@ -22,12 +22,12 @@ A **Project** is a collection of **Environments** and therefore **Services**. It
 
 - **Kubernetes label**: Each project is associated with a Kubernetes label, which is used to group resources within the cluster.
 - **Permission enforcement**: Despite teams directly linked to Kubernetes RBAC, permissions are still configurable and enforceable at the project level.
-  - This means  you could have a user that has access to a team, but only has access to specific projects within that team.
+  - This means you could have a user that has access to a team, but only has access to specific projects within that team.
 
 Within one project, you can create multiple **Environments**.
 
 ## Environment
-An **Environment** is a the last level of the Unbind hierarchy. It is a logical grouping of **Services** that are related to a specific environment, such as development, staging, or production.
+An **Environment** is a logical grouping of **Services** that are intended to be related to a specific environment, such as development, staging, or production.
 
 - **Kubernetes label**: Each environment is associated with a Kubernetes label, which is used to group resources within the cluster.
 - **Permission enforcement**: Permissions are also configurable and enforceable at the environment level.

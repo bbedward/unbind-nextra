@@ -3,10 +3,6 @@ title: "MinIO Post-Install"
 description: "Deploy and configure MinIO with Unbind's pre-configured template"
 ---
 
-# MinIO Access
-
-You can access your MinIO console by visiting the page after deployment.
-
 ## Notable Variables
 
 | Variable Name | Service Name | Description |
@@ -15,6 +11,8 @@ You can access your MinIO console by visiting the page after deployment.
 | `MINIO_ROOT_PASSWORD` | MinIO | The password to login to the MinIO console |
 
 ## Accessing your MinIO Console
+
+The MinIO template also deploys the MinIO web interface, in addition to the MinIO API service.
 
 1. Visit the URL of the `MinIO` service
 2. Login with the credentials from the `Variables` section of the `MinIO` service
