@@ -54,16 +54,25 @@ kubectl get nodes
 
 You are free to repurpose or delete the server as you see fit.
 
-## High Availability
+## (Advanced) High Availability
 
 <Callout type="warning">
 This section is a **work in progress** and just gives a general overview of how to achieve high availability.
+In the future we will provide more documentation about deploying high-availability version of Unbind
 </Callout>
 
 For a high availability k3s cluster, generally you will need to configure the following:
-- An **odd** number of *control plane* servers.
+- An **odd** number of *control plane* servers (at least 3).
 - Control planes need to use `etcd`, for k3s this is a matter of adding `--cluster-init` to `/etc/systemd/system/k3s.service` and restarting the service with `sudo systemctl daemon-reload && sudo systemctl restart k3s`
 - It's ideal to configure an external load balancer, many cloud providers offer load balancers as a service.
 - It's ideal to **not** schedule normal workloads on the control plane servers, and instead use a separate set of servers for that.
   - You can use [taints](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) to prevent workloads from being scheduled to the control plane servers.
 - If using [longhorn](https://longhorn.io/) (Unbind's default storage class) - it's ideal to increase the number of replicas to 3 or more to prevent data loss in the event of a total system failure.
+
+<Callout>
+The easiest way to achieve a higher availability setup would be to use a managed Kubernetes solution such as [EKS (AWS)](https://aws.amazon.com/eks/), [GKE (Google)](https://cloud.google.com/kubernetes-engine), [AKS (Azure)](https://azure.microsoft.com/en-us/products/kubernetes-service), or [DOKS (DigitalOcean)](https://www.digitalocean.com/products/kubernetes).
+</Callout>
+
+<Callout>
+An easier, much more cost-effective HA cloud solution is to deploy on [Hetzner](https://www.hetzner.com/cloud) with the [k3s terraform template](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner)
+</Callout>
